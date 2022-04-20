@@ -1,0 +1,9 @@
+fastapi==0.75.2
+joblib==1.0.1
+nepalitokenizer==1.8.6.0
+numpy==1.19.5
+pandas==1.4.1
+pydantic==1.8.2
+requests==2.27.1
+scikit_learn==1.0.2
+utils==1.0.1
