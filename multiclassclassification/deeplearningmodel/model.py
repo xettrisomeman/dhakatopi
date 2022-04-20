@@ -15,7 +15,7 @@ class DNN(nn.Module):
             bidirectional=bidirectional,
             dropout=dropout
         )
-        self.fc = nn.Linear(hidden_dim * 2, output_dim)
+        self.fc = nn.Linear(hidden_dim * 2 if bidirectional else hidden_dim, output_dim)
         self.dropout = nn.Dropout(dropout)
      
 
@@ -39,12 +39,15 @@ class DNN(nn.Module):
         #hidden -> [num layers * num directions, batch_size, hid_dim]
         #cell = [num_layers* num_directions, batch_size, hid_dim]
 
-        #concat tehf  inal forward (hidden[-2, :, :]) and 
+        #concat teh final forward (hidden[-2, :, :]) and 
         #backward (hidden(-1, :,:)) hidden layers and apply dropout
 
-        hidden = self.dropout(torch.cat((hidden[-2, :, :], hidden[-1, :, :]), dim=1))
-
-        #hidden = [batch_size, hid_dim * num_directions]
+        if self.rnn.bidirectional:
+            hidden = self.dropout(torch.cat([hidden[-1], hidden[-2]], dim=-1))
+            # hidden = [batch size, hidden dim * 2]
+        else:
+            hidden = self.dropout(hidden[-1])
+            # hidden = [batch size, hidden dim]
 
         return self.fc(hidden)
 
